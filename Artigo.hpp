@@ -3,48 +3,36 @@
 
 #include <iostream>
 #include <string>
+#include <fstream>
 
-class Artigo {
-private:
+#define SIZE_TITLE 300
+#define SIZE_AUTHORS 150
+#define SIZE_UPDATE 20
+#define SIZE_SNIPPET 1024
+
+#define NUMBER_OF_BUCKETS 908201
+
+#define NUMBER_OF_REGISTERS 2
+#define SIZE_REGISTERS NUMBER_OF_REGISTERS * (12 + SIZE_TITLE + SIZE_SNIPPET + SIZE_AUTHORS + SIZE_UPDATE)
+
+
+struct Article
+{
     int id;
-    std::string titulo;
     int ano;
-    std::string autores;
     int citacoes;
-    std::string atualizacao;
-    std::string snippet;
-
-public:
-    Artigo() : id(0), ano(0), citacoes(0) {}
-
-    // Setters
-    void setId(int id) { this->id = id; }
-    void setTitulo(const std::string& titulo) { this->titulo = titulo; }
-    void setAno(int ano) { this->ano = ano; }
-    void setAutores(const std::string& autores) { this->autores = autores; }
-    void setCitacoes(int citacoes) { this->citacoes = citacoes; }
-    void setAtualizacao(const std::string& atualizacao) { this->atualizacao = atualizacao; }
-    void setSnippet(const std::string& snippet) { this->snippet = snippet; }
-
-    // Getters
-    int getId() const { return id; }
-    std::string getTitulo() const { return titulo; }
-    int getAno() const { return ano; }
-    std::string getAutores() const { return autores; }
-    int getCitacoes() const { return citacoes; }
-    std::string getAtualizacao() const { return atualizacao; }
-    std::string getSnippet() const { return snippet; }
-
-    // Método para exibir os dados do artigo
-    void exibir() const {
-        std::cout << "ID: " << id << "\n"
-                  << "Título: " << titulo << "\n"
-                  << "Ano: " << ano << "\n"
-                  << "Autores: " << autores << "\n"
-                  << "Citações: " << citacoes << "\n"
-                  << "Atualização: " << atualizacao << "\n"
-                  << "Snippet: " << snippet << "\n\n";
-    }
+    char titulo[SIZE_TITLE];
+    char atualizacao[SIZE_UPDATE];
+    char autores[SIZE_AUTHORS];
+    char snippet[SIZE_SNIPPET];
 };
 
-#endif // ARTIGO_HPP
+struct Block
+{
+    int quantidade_registers;
+    char bloco[SIZE_REGISTERS];
+};
+
+Block bucket_by_id(fstream *file_hash, int id)
+
+#endif 
