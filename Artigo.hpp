@@ -33,6 +33,12 @@ struct Block
     char bloco[SIZE_REGISTERS];
 };
 
-Block bucket_by_id(fstream *file_hash, int id)
 
+unsigned long hash_function(int id);
+void print_article(Article artigo);
+Block bucket_by_id(std::fstream *file_hash, int id);
+bool insert_hash(std::fstream *file_hash, Article artigo);
+Article search_by_id(std::fstream *file_hash, int id);
+Block bucket_by_position(std::fstream *file_hash, int posicao);
+Article article_by_title(std::fstream *file_hash, int posicao, char titulo_busca[SIZE_TITLE]);
 #endif 
