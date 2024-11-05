@@ -1,79 +1,55 @@
 #include <iostream>
-#include <fstream>
-#include <sstream>
-#include <vector>
 #include <string>
-#include "Artigo.hpp"
+#include <string.h>
+#include <stdlib.h>
+#include "hashTable.hpp"
 
+void copy(char* copy_to, std::string copy_by, int size) {
+    strncpy(copy_to, copy_by.c_str(), size);
+    copy_to[size-1] = 0;
+}
 
-int main(int argc, char const *argv[]) {
-    std::ifstream file(argv[1]);
+Article parsing(std::string line){
+	Article article;
+	std::string delimiter = "\";"; 
+	size_t position = 0;
+	std::string token;
+	int column = 0;
 
-    if (!file.is_open()) {
-        std::cerr << "Deu pra abrir o arquivo " << argv[1] << " não ó negão" << std::endl;
-        return 1;       
-    }
-    
-    std::string linha;
-    std::vector<Artigo> artigos;
+	while ((position = line.find(delimiter)) != std::string::npos) {
+       
+       token = line.substr(1, position-1);
+       //Extracao dos campos
+	    if (column == 0){
+	    	article.id= atoi(token.c_str());
+	    }
+	    else if(column == 1){
+	    	copy(article.titulo, token.c_str(), SIZE_TITLE);
+	    }
+	    else if(column == 2){
+	    	article.ano = atoi(token.c_str());
+	    }
+	    else if(column == 3){
 
-    while (std::getline(file, linha)) {
-        Artigo artigo;
-        std::string valor;
-        bool dentroDeAspas = false;
-
-        for (char ch : linha) {
-            if (ch == '"') {
-                // Alterna o estado de estar dentro ou fora de aspas
-                dentroDeAspas = !dentroDeAspas;
-            }
-
-            if (ch == ';' && !dentroDeAspas) {
-                // Se encontramos um delimitador e não estamos dentro de aspas, adicionamos o valor
-                if (!valor.empty()) {
-                    // Remove aspas do valor, se existirem
-                    if (valor.front() == '"') valor.erase(0, 1);
-                    if (valor.back() == '"') valor.erase(valor.size() - 1);
-
-                    // Armazena o valor na struct correspondente
-                    if (artigo.getId() == 0) { // ID
-                        artigo.setId(std::stoi(valor));
-                    } else if (artigo.getTitulo().empty()) { // Título
-                        artigo.setTitulo(valor);
-                    } else if (artigo.getAno() == 0) { // Ano
-                        artigo.setAno(std::stoi(valor));
-                    } else if (artigo.getAutores().empty()) { // Autores
-                        artigo.setAutores(valor);
-                    } else if (artigo.getCitacoes() == 0) { // Citações
-                        artigo.setCitacoes(std::stoi(valor));
-                    } else if (artigo.getAtualizacao().empty()) { // Atualização
-                        artigo.setAtualizacao(valor);
-                    } else if (artigo.getSnippet().empty()) { // Snippet
-                        artigo.setSnippet(valor);
-                    }
-
-                    valor.clear(); // Limpa o valor para o próximo campo
-                }
-            } else {
-                valor += ch; // Adiciona o caractere ao valor atual
-            }
+            copy(article.autores, token.c_str(), SIZE_AUTHORS);
+	    }
+	    else if(column == 4){
+	    	article.citacoes = atoi(token.c_str());
+	    }
+        else if(column == 5){
+            copy(article.atualizacao, token.c_str(), SIZE_UPDATE);
         }
+	    line.erase(0, position + delimiter.length());   
+	    column ++;
+	}
 
-        // Adiciona o último valor, se houver
-        if (!valor.empty()) {
-            if (valor.front() == '"') valor.erase(0, 1);
-            if (valor.back() == '"') valor.erase(valor.size() - 1);
-            artigo.setSnippet(valor); // O snippet é o último valor
+	if(line.length() > 0){
+        token = line.substr(0, line.length()-1);
 
-            // Adiciona o artigo à lista
-            artigos.push_back(artigo);
+        if(strcmp(token.c_str(), "NULL") != 0){
+            token = line.substr(1, line.length()-3); 
         }
-    }
-
-    // Exibe os artigos lidos
-    for (const auto& art : artigos) {
-        art.exibir();
-    }
-
-    return 0;
+        copy(article.snippet, token.c_str(), SIZE_SNIPPET);
+	}
+    return article;
 }
